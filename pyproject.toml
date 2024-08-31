@@ -3,3 +3,13 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "3.12.2"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.6.3"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D203", "D212", "COM812", "ISC001"]
