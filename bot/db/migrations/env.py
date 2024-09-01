@@ -7,13 +7,14 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from bot.config import settings
+from bot.db.models import ModelBase
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = None
+target_metadata = ModelBase.metadata
 
 config.set_main_option("sqlalchemy.url", settings.db.url)
 
