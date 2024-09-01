@@ -21,8 +21,15 @@ class DatabaseSettings(BaseModel):
         ).unicode_string()
 
 
+class AlchemySettings(BaseModel):
+    echo: bool = False
+    echo_pool: bool = False
+    max_overflow: int = 10
+
+
 class Settings(BaseSettings):
     db: DatabaseSettings
+    alchemy: AlchemySettings = AlchemySettings()
 
     model_config = SettingsConfigDict(env_nested_delimiter="__", env_ignore_empty=True)
 
