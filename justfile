@@ -3,6 +3,9 @@ default: fmt lint
 # Application Management
 compose_file := "docker-compose-local.yaml"
 
+run:
+    python -m bot.main
+
 up:
     docker compose -f {{compose_file}} up -d
 

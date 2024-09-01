@@ -2,6 +2,10 @@ from pydantic import BaseModel, Field, PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class BotSettings(BaseModel):
+    token: str
+
+
 class DatabaseSettings(BaseModel):
     username: str
     password: str | None = None
@@ -28,6 +32,7 @@ class AlchemySettings(BaseModel):
 
 
 class Settings(BaseSettings):
+    bot: BotSettings
     db: DatabaseSettings
     alchemy: AlchemySettings = AlchemySettings()
 
