@@ -1,4 +1,4 @@
-default: lint fmt
+default: fmt lint
 
 # Application Management
 compose_file := "docker-compose-local.yaml"
