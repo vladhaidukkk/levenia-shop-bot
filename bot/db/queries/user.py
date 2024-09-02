@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,3 +17,9 @@ async def add_user(session: AsyncSession, tg_id: int) -> UserModel:
         raise UserAlreadyExistsError(tg_id=tg_id) from error
     else:
         return new_user
+
+
+@inject_session
+async def get_user(session: AsyncSession, tg_id: int) -> UserModel | None:
+    query = select(UserModel).filter_by(tg_id=tg_id)
+    return await session.scalar(query)
