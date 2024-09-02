@@ -1,7 +1,7 @@
 import contextlib
 
 from aiogram import Router
-from aiogram.filters import CommandStart
+from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from aiogram.utils import markdown
 
@@ -17,3 +17,8 @@ async def start_command_handler(message: Message) -> None:
         await add_user(tg_id=message.from_user.id)
 
     await message.answer(text=markdown.text("👋", markdown.hbold(message.from_user.full_name)))
+
+
+@router.message(Command("id"))
+async def id_command_handler(message: Message) -> None:
+    await message.answer(text=markdown.text("Here's your ID:", markdown.hcode(message.from_user.id)))
