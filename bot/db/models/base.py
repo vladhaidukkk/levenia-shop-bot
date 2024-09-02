@@ -3,9 +3,9 @@ from typing import ClassVar
 
 import sqlalchemy as sa
 from sqlalchemy import Column, MetaData, event
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, declared_attr
 
-from bot.utils import pascal_to_snake
+from bot.utils import pascal_to_snake, pluralize
 
 
 @event.listens_for(sa.Enum, "before_parent_attach")
@@ -27,3 +27,11 @@ class ModelBase(DeclarativeBase):
     type_annotation_map: ClassVar[dict] = {
         enum.Enum: sa.Enum(enum.Enum, name="DEFAULT"),
     }
+
+    @declared_attr
+    @classmethod
+    def __tablename__(cls) -> str:
+        model_name = pascal_to_snake(cls.__name__.removesuffix("Model"))
+        name_parts = model_name.split("_")
+        name_parts[-1] = pluralize(name_parts[-1])
+        return "_".join(name_parts)
