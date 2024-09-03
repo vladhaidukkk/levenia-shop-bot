@@ -55,6 +55,8 @@ async def change_role_survey_new_role_handler(message: Message, state: FSMContex
     data = await state.get_data()
 
     updated_user = await update_user(tg_id=data["user_tg_id"], role=data["new_role"])
+    if user.tg_id == updated_user.tg_id:
+        user = updated_user
 
     await state.clear()
     await message.answer(
