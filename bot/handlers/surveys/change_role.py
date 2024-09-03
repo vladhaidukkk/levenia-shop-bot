@@ -6,11 +6,13 @@ from aiogram.utils import markdown
 
 from bot.db.models import UserModel
 from bot.db.queries.user import get_user, update_user
+from bot.filters import AdminFilter
 from bot.keyboards.change_role import ROLE_TO_TEXT_MAP, build_change_role_keyboard
 from bot.keyboards.root import RootKeyboardText, build_root_keyboard
 from bot.utils import get_key_by_value
 
 router = Router(name=__name__)
+router.message.filter(AdminFilter())
 
 
 class ChangeRoleSurvey(StatesGroup):
