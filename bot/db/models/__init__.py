@@ -1,2 +1,2 @@
 from .base import ModelBase
-from .user import UserModel
+from .user import UserModel, UserRole
