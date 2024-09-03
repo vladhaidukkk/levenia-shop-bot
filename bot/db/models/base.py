@@ -1,4 +1,5 @@
 import enum
+from itertools import islice
 from typing import ClassVar
 
 import sqlalchemy as sa
@@ -35,3 +36,14 @@ class ModelBase(DeclarativeBase):
         name_parts = model_name.split("_")
         name_parts[-1] = pluralize(name_parts[-1])
         return "_".join(name_parts)
+
+    __repr_limit__: int | None = None
+    __repr_ignore__: tuple[str, ...] = ()
+
+    def __repr__(self) -> str:
+        cols = [
+            f"{col}={getattr(self, col)!r}"
+            for col in islice(self.__table__.columns.keys(), self.__repr_limit__)
+            if col not in self.__repr_ignore__
+        ]
+        return f"<{self.__class__.__name__} {', '.join(cols)}>"
