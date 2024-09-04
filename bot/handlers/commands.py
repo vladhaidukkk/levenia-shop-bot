@@ -6,6 +6,7 @@ from aiogram.types import Message
 from aiogram.utils import markdown
 
 from bot.db.models import UserModel
+from bot.db.queries.referral import add_referral
 from bot.db.queries.user import add_user, get_user
 from bot.keyboards.root import build_root_keyboard
 
@@ -20,14 +21,16 @@ router = Router(name=__name__)
     )
 )
 async def referral_start_command_handler(message: Message, referral: Match[str], user: UserModel | None) -> None:
+    referrer_tg_id = int(referral.group(1))
+    referrer = await get_user(tg_id=referrer_tg_id)
+    is_referral_applicable = bool(referrer and not user)
+
     if not user:
         user = await add_user(tg_id=message.from_user.id)
 
-    referrer_tg_id = int(referral.group(1))
-    referrer = await get_user(tg_id=referrer_tg_id)
-    if referrer:
-        # TODO: create Referral record
-        pass
+    if is_referral_applicable:
+        await add_referral(user_tg_id=user.tg_id, referrer_tg_id=referrer.tg_id)
+        # TODO: create bonus/discount record
 
     await message.answer(
         # TODO: update welcome message
