@@ -27,11 +27,21 @@ async def referral_start_command_handler(message: Message, referral: Match[str],
     is_referral_applicable = bool(referrer and not user)
 
     if not user:
-        user = await add_user(tg_id=message.from_user.id)
+        user = await add_user(tg_id=message.from_user.id, username=message.from_user.username)
 
     if is_referral_applicable:
         bonus = await add_bonus(user_tg_id=referrer.tg_id, type_=BonusType.DISCOUNT, value=5, unit=BonusUnit.PERCENTAGE)
         await add_referral(user_tg_id=user.tg_id, referrer_tg_id=referrer.tg_id, bonus_id=bonus.id)
+        await message.bot.send_message(
+            chat_id=referrer.tg_id,
+            text=markdown.text(
+                "🎉 Вітаємо! Ваш друг",
+                markdown.hbold(user.username),
+                "зайшов у бота. Ви отримали знижку",
+                markdown.hbold("5%"),
+                "на наступну покупку!",
+            ),
+        )
 
     await message.answer(
         # TODO: update welcome message
@@ -43,7 +53,7 @@ async def referral_start_command_handler(message: Message, referral: Match[str],
 @router.message(CommandStart())
 async def start_command_handler(message: Message, user: UserModel | None) -> None:
     if not user:
-        user = await add_user(tg_id=message.from_user.id)
+        user = await add_user(tg_id=message.from_user.id, username=message.from_user.username)
     await message.answer(
         # TODO: update welcome message
         text=markdown.text("👋", markdown.hbold(message.from_user.full_name)),

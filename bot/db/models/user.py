@@ -16,5 +16,6 @@ class UserRole(StrEnum):
 class UserModel(ModelBase):
     id: Mapped[intpk]
     tg_id: Mapped[int] = mapped_column(unique=True)
+    username: Mapped[str] = mapped_column(unique=True)
     role: Mapped[UserRole] = mapped_column(server_default=UserRole.CLIENT.name)
     created_at: Mapped[created_at]
