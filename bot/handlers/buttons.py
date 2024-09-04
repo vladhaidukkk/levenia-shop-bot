@@ -10,7 +10,7 @@ router = Router(name=__name__)
 
 @router.message(F.text == RootKeyboardText.INVITE_FRIEND)
 async def invite_friend_button_handler(message: Message) -> None:
-    ref_link = await create_start_link(bot=message.bot, payload=str(message.from_user.id), encode=True)
+    ref_link = await create_start_link(bot=message.bot, payload=f"referrer_id:{message.from_user.id}", encode=True)
     await message.answer(
         text=markdown.text(
             "📤 Поділіться цим посиланням з другом:",
