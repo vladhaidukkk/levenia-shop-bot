@@ -11,8 +11,8 @@ def pascal_to_snake(text: str) -> str:
 
 
 def pluralize(text: str) -> str:
-    is_singular = inflector.singular_noun(text) is False
-    return inflector.plural_noun(text) if is_singular else text
+    plural_form = inflector.plural_noun(text)
+    return text if plural_form.endswith("ss") else plural_form
 
 
 K = TypeVar("K")

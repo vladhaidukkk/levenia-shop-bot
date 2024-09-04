@@ -20,6 +20,7 @@ user_role_enum = sa.Enum("ADMIN", "MANAGER", "CLIENT", name="user_role")
 
 
 def upgrade() -> None:
+    # We must create the type first because the server_default value is specified.
     user_role_enum.create(op.get_bind())
     op.add_column(
         "users",
