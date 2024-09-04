@@ -30,6 +30,9 @@ ignore = [
   "FIX",
   "INP",
   "ISC001",
+  "RUF001",
+  "RUF002",
+  "RUF003",
   "TD002",
   "TD003",
 ]
