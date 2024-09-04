@@ -5,7 +5,8 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from aiogram.utils import markdown
 
-from bot.db.models import UserModel
+from bot.db.models import BonusType, BonusUnit, UserModel
+from bot.db.queries.bonus import add_bonus
 from bot.db.queries.referral import add_referral
 from bot.db.queries.user import add_user, get_user
 from bot.keyboards.root import build_root_keyboard
@@ -29,8 +30,8 @@ async def referral_start_command_handler(message: Message, referral: Match[str],
         user = await add_user(tg_id=message.from_user.id)
 
     if is_referral_applicable:
-        await add_referral(user_tg_id=user.tg_id, referrer_tg_id=referrer.tg_id)
-        # TODO: create bonus/discount record
+        bonus = await add_bonus(user_tg_id=referrer.tg_id, type_=BonusType.DISCOUNT, value=5, unit=BonusUnit.PERCENTAGE)
+        await add_referral(user_tg_id=user.tg_id, referrer_tg_id=referrer.tg_id, bonus_id=bonus.id)
 
     await message.answer(
         # TODO: update welcome message
