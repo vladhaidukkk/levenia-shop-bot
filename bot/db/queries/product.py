@@ -1,7 +1,10 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.db.core import inject_session
 from bot.db.models import ProductGender, ProductModel
+from bot.errors import ProductAlreadyDeletedError, ProductNotFoundError
+from bot.utils import utcnow
 
 
 @inject_session
@@ -32,3 +35,18 @@ async def add_product(
     session.add(new_product)
     await session.commit()
     return new_product
+
+
+@inject_session
+async def delete_product(session: AsyncSession, id_: int) -> None:
+    select_product_query = select(ProductModel).filter_by(id=id_)
+    product = await session.scalar(select_product_query)
+
+    if not product:
+        raise ProductNotFoundError(id_=id_)
+
+    if product.deleted_at:
+        raise ProductAlreadyDeletedError(id_=id_)
+
+    product.deleted_at = utcnow()
+    await session.commit()

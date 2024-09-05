@@ -8,13 +8,14 @@ from bot.db.models import UserRole
 
 class RootKeyboardText(StrEnum):
     CHANGE_ROLE = "🎭 Змінити Роль"
-    ADD_PRODUCT = "➕ Додати Новий Одяг"
+    ADD_PRODUCT = "🆕 Додати Новий Одяг"
+    DELETE_PRODUCT = "🗑️ Видалити Одяг"
     INVITE_FRIEND = "🔗 Запросити Друга"
 
 
 def build_root_keyboard(role: UserRole) -> ReplyKeyboardMarkup:
     client_actions = [RootKeyboardText.INVITE_FRIEND]
-    manager_actions = [RootKeyboardText.ADD_PRODUCT, *client_actions]
+    manager_actions = [RootKeyboardText.ADD_PRODUCT, RootKeyboardText.DELETE_PRODUCT, *client_actions]
     admin_actions = [RootKeyboardText.CHANGE_ROLE, *manager_actions]
     role_to_actions_map = {
         UserRole.ADMIN: admin_actions,

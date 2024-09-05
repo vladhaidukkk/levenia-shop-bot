@@ -1,3 +1,4 @@
+import datetime as dt
 import re
 from typing import TypeVar
 
@@ -21,3 +22,7 @@ V = TypeVar("V")
 
 def get_key_by_value(dict_: dict[K, V], target_value: V) -> K | None:
     return next((key for key, value in dict_.items() if value == target_value), None)
+
+
+def utcnow() -> dt.datetime:
+    return dt.datetime.now(dt.UTC).replace(tzinfo=None)

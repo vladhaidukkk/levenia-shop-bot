@@ -77,7 +77,7 @@ async def add_product_survey_price_handler(message: Message, state: FSMContext, 
     await message.answer(
         text=markdown.text(
             "✅ Одяг успішно доданий до каталогу.",
-            f"Ось його унікальний ідентифікатор: {markdown.hcode(product.id)}.",
+            f"Ось його ID: {markdown.hcode(product.id)}.",
         ),
         reply_markup=build_root_keyboard(role=user.role),
     )
