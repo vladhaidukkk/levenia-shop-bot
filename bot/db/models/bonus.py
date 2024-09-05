@@ -5,7 +5,8 @@ from sqlalchemy import CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 from bot.db.model_types import created_at, intpk
-from bot.db.models.base import ModelBase
+
+from .base import ModelBase
 
 
 class BonusType(StrEnum):
