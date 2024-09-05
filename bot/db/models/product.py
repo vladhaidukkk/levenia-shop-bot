@@ -1,3 +1,4 @@
+import datetime as dt
 from enum import StrEnum, auto
 
 from sqlalchemy import BigInteger, CheckConstraint, ForeignKey
@@ -26,5 +27,6 @@ class ProductModel(ModelBase):
     material: Mapped[str | None]
     price: Mapped[int]
     created_at: Mapped[created_at]
+    deleted_at: Mapped[dt.datetime | None]
 
     __table_args__ = (CheckConstraint("price > 0", name="price_positive"),)
