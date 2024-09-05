@@ -66,6 +66,7 @@ async def add_product_survey_price_handler(message: Message, state: FSMContext, 
     data = await state.get_data()
 
     product = await add_product(
+        creator_tg_id=user.tg_id,
         name=data["name"],
         gender=data["gender"],
         category=data["category"],

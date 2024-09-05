@@ -1,7 +1,7 @@
 from enum import StrEnum, auto
 
-from sqlalchemy import CheckConstraint
-from sqlalchemy.orm import Mapped
+from sqlalchemy import BigInteger, CheckConstraint, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 
 from bot.db.model_types import created_at, intpk
 
@@ -16,6 +16,7 @@ class ProductGender(StrEnum):
 
 class ProductModel(ModelBase):
     id: Mapped[intpk]
+    creator_tg_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.tg_id"))
     name: Mapped[str]
     image_id: Mapped[str | None]
     description: Mapped[str | None]

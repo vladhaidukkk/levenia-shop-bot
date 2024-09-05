@@ -8,6 +8,7 @@ from bot.db.models import ProductGender, ProductModel
 async def add_product(
     session: AsyncSession,
     *,
+    creator_tg_id: int,
     name: str,
     image_id: str | None = None,
     description: str | None = None,
@@ -18,6 +19,7 @@ async def add_product(
     price: int,
 ) -> ProductModel:
     new_product = ProductModel(
+        creator_tg_id=creator_tg_id,
         name=name,
         image_id=image_id,
         description=description,
