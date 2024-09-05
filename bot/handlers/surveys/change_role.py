@@ -62,6 +62,14 @@ async def change_role_survey_new_role_handler(message: Message, state: FSMContex
     updated_user = await update_user(tg_id=data["user_tg_id"], role=data["new_role"])
     if user.tg_id == updated_user.tg_id:
         user = updated_user
+    else:
+        await message.bot.send_message(
+            chat_id=updated_user.tg_id,
+            text=markdown.text(
+                "🎭 Вашу роль було змінено. Тепер ви -",
+                markdown.hbold(updated_user.role.value.capitalize()),
+            ),
+        )
 
     await state.clear()
     await message.answer(
