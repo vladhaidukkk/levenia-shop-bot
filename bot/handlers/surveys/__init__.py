@@ -16,7 +16,7 @@ router = Router(name=__name__)
 @router.message(Command("cancel"))
 async def cancel_command_handler(message: Message, state: FSMContext, user: UserModel) -> None:
     await state.clear()
-    await message.answer(text="🚫 Поточна дія скасована.", reply_markup=build_root_keyboard(role=user.role))
+    await message.answer("🚫 Поточна дія скасована.", reply_markup=build_root_keyboard(role=user.role))
 
 
 router.include_routers(change_role_survey_router, add_product_survey_router, delete_product_survey_router)

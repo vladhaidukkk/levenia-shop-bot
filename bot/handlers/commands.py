@@ -45,7 +45,7 @@ async def referral_start_command_handler(message: Message, referral: Match[str],
 
     await message.answer(
         # TODO: update welcome message
-        text=markdown.text("👋", markdown.hbold(message.from_user.full_name)),
+        markdown.text("👋", markdown.hbold(message.from_user.full_name)),
         reply_markup=build_root_keyboard(role=user.role),
     )
 
@@ -56,11 +56,11 @@ async def start_command_handler(message: Message, user: UserModel | None) -> Non
         user = await add_user(tg_id=message.from_user.id, username=message.from_user.username)
     await message.answer(
         # TODO: update welcome message
-        text=markdown.text("👋", markdown.hbold(message.from_user.full_name)),
+        markdown.text("👋", markdown.hbold(message.from_user.full_name)),
         reply_markup=build_root_keyboard(role=user.role),
     )
 
 
 @router.message(Command("id"))
 async def id_command_handler(message: Message) -> None:
-    await message.answer(text=markdown.hcode(message.from_user.id))
+    await message.answer(markdown.hcode(message.from_user.id))

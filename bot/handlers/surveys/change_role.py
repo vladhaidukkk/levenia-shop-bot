@@ -24,7 +24,7 @@ class ChangeRoleSurvey(StatesGroup):
 async def change_role_button_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(ChangeRoleSurvey.user_tg_id)
     await message.answer(
-        text="🪪 Введіть ID користувача, для якого ви хочете змінити роль:",
+        "🪪 Введіть ID користувача, для якого ви хочете змінити роль:",
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -34,18 +34,18 @@ async def change_role_survey_user_tg_id_handler(message: Message, state: FSMCont
     try:
         user_tg_id = int(message.text)
     except ValueError:
-        await message.answer(text="⚠️ Ви ввели неправильний ID користувача. Спробуйте ще раз:")
+        await message.answer("⚠️ Ви ввели неправильний ID користувача. Спробуйте ще раз:")
         return
 
     user = await get_user(tg_id=user_tg_id)
     if not user:
-        await message.answer(text="⚠️ Користувача з таким ID не існує. Спробуйте ще раз:")
+        await message.answer("⚠️ Користувача з таким ID не існує. Спробуйте ще раз:")
         return
 
     await state.update_data({"user_tg_id": user_tg_id})
     await state.set_state(ChangeRoleSurvey.new_role)
     await message.answer(
-        text=markdown.text(
+        markdown.text(
             "️🔍 Поточна роль користувача:",
             f"{markdown.hbold(user.role.value.capitalize())}.",
             "Оберіть нову роль, натиснувши кнопку.",
@@ -65,7 +65,7 @@ async def change_role_survey_new_role_handler(message: Message, state: FSMContex
 
     await state.clear()
     await message.answer(
-        text=markdown.text(
+        markdown.text(
             "✅ Роль для користувача",
             markdown.hcode(updated_user.tg_id),
             "успішно змінено.",
@@ -77,6 +77,6 @@ async def change_role_survey_new_role_handler(message: Message, state: FSMContex
 @router.message(ChangeRoleSurvey.new_role, ~F.text.in_(ROLE_TO_TEXT_MAP.values()))
 async def change_role_survey_unknown_new_role_handler(message: Message, user: UserModel) -> None:
     await message.answer(
-        text="⚠️ Вказаної ролі не існує. Будь ласка, оберіть роль, натиснувши кнопку.",
+        "⚠️ Вказаної ролі не існує. Будь ласка, оберіть роль, натиснувши кнопку.",
         reply_markup=build_change_role_keyboard(active_role=user.role),
     )

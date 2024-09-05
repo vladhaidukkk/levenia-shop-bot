@@ -21,7 +21,7 @@ class DeleteProductSurvey(StatesGroup):
 @router.message(F.text == RootKeyboardText.DELETE_PRODUCT)
 async def delete_product_button_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(DeleteProductSurvey.product_id)
-    await message.answer(text="🆔️ Введіть ID одягу, який ви хочете видалити:", reply_markup=ReplyKeyboardRemove())
+    await message.answer("🆔️ Введіть ID одягу, який ви хочете видалити:", reply_markup=ReplyKeyboardRemove())
 
 
 @router.message(DeleteProductSurvey.product_id, F.text.regexp(r"^\d+$"))
@@ -32,15 +32,15 @@ async def delete_product_survey_product_id_handler(message: Message, state: FSMC
     try:
         await delete_product(id_=data["product_id"])
     except ProductNotFoundError:
-        await message.answer(text="⚠️ Одягу з таким ID не існує. Спродуйте ще раз:")
+        await message.answer("⚠️ Одягу з таким ID не існує. Спродуйте ще раз:")
         return
     except ProductAlreadyDeletedError:
-        await message.answer(text="⚠️ Одяг з цим ID вже видалено. Введіть інший ID:")
+        await message.answer("⚠️ Одяг з цим ID вже видалено. Введіть інший ID:")
         return
 
     await state.clear()
     await message.answer(
-        text=markdown.text(
+        markdown.text(
             "🗑️ Одяг з ID:",
             markdown.hcode(data["product_id"]),
             "видалено. Ви можете відновити його будь-коли.",
@@ -51,4 +51,4 @@ async def delete_product_survey_product_id_handler(message: Message, state: FSMC
 
 @router.message(DeleteProductSurvey.product_id, ~F.text.regexp(r"^\d+$"))
 async def delete_product_survey_invalid_product_id_handler(message: Message) -> None:
-    await message.answer(text="⚠️ ID одягу вміщає лише цифри. Введіть значення ще раз:")
+    await message.answer("⚠️ ID одягу вміщає лише цифри. Введіть значення ще раз:")

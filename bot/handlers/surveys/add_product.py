@@ -25,7 +25,7 @@ class AddProductSurvey(StatesGroup):
 @router.message(F.text == RootKeyboardText.ADD_PRODUCT)
 async def add_product_button_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(AddProductSurvey.name)
-    await message.answer(text="📝 Введіть назву одягу:", reply_markup=ReplyKeyboardRemove())
+    await message.answer("📝 Введіть назву одягу:", reply_markup=ReplyKeyboardRemove())
 
 
 @router.message(AddProductSurvey.name)
@@ -33,7 +33,7 @@ async def add_product_survey_name_handler(message: Message, state: FSMContext) -
     await state.update_data({"name": message.text})
     await state.set_state(AddProductSurvey.gender)
     await message.answer(
-        text="🚻 Оберіть гендер одягу, натиснувши кнопку.",
+        "🚻 Оберіть гендер одягу, натиснувши кнопку.",
         reply_markup=build_select_product_gender_keyboard(),
     )
 
@@ -42,13 +42,13 @@ async def add_product_survey_name_handler(message: Message, state: FSMContext) -
 async def add_product_survey_gender_handler(message: Message, state: FSMContext) -> None:
     await state.update_data({"gender": get_key_by_value(PRODUCT_GENDER_TO_TEXT_MAP, message.text)})
     await state.set_state(AddProductSurvey.category)
-    await message.answer(text="🏷️ Введіть категорію одягу:", reply_markup=ReplyKeyboardRemove())
+    await message.answer("🏷️ Введіть категорію одягу:", reply_markup=ReplyKeyboardRemove())
 
 
 @router.message(AddProductSurvey.gender, ~F.text.in_(PRODUCT_GENDER_TO_TEXT_MAP.values()))
 async def add_product_survey_unknown_gender_handler(message: Message) -> None:
     await message.answer(
-        text="⚠️ Вказаного гендеру не існує. Будь ласка, оберіть гендер одягу, натиснувши кнопку.",
+        "⚠️ Вказаного гендеру не існує. Будь ласка, оберіть гендер одягу, натиснувши кнопку.",
         reply_markup=build_select_product_gender_keyboard(),
     )
 
@@ -57,7 +57,7 @@ async def add_product_survey_unknown_gender_handler(message: Message) -> None:
 async def add_product_survey_category_handler(message: Message, state: FSMContext) -> None:
     await state.update_data({"category": message.text})
     await state.set_state(AddProductSurvey.price)
-    await message.answer(text="💵 Вкажіть ціну одягу в гривнях:")
+    await message.answer("💵 Вкажіть ціну одягу в гривнях:")
 
 
 @router.message(AddProductSurvey.price, F.text.regexp(r"^[1-9][0-9]*$"))
@@ -75,7 +75,7 @@ async def add_product_survey_price_handler(message: Message, state: FSMContext, 
 
     await state.clear()
     await message.answer(
-        text=markdown.text(
+        markdown.text(
             "✅ Одяг успішно доданий до каталогу.",
             f"Ось його ID: {markdown.hcode(product.id)}.",
         ),
@@ -85,4 +85,4 @@ async def add_product_survey_price_handler(message: Message, state: FSMContext, 
 
 @router.message(AddProductSurvey.price, ~F.text.regexp(r"^[1-9][0-9]*$"))
 async def add_product_survey_invalid_price_handler(message: Message) -> None:
-    await message.answer(text="⚠️ Ціна може складатися лише з цифр. Введіть значення ще раз:")
+    await message.answer("⚠️ Ціна може складатися лише з цифр. Введіть значення ще раз:")
