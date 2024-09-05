@@ -1,7 +1,7 @@
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.utils import markdown
 
 from bot.db.models import UserModel
@@ -23,7 +23,10 @@ class ChangeRoleSurvey(StatesGroup):
 @router.message(F.text == RootKeyboardText.CHANGE_ROLE)
 async def change_role_button_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(ChangeRoleSurvey.user_tg_id)
-    await message.answer(text="🪪 Введіть ID користувача, для якого ви хочете змінити роль:")
+    await message.answer(
+        text="🪪 Введіть ID користувача, для якого ви хочете змінити роль:",
+        reply_markup=ReplyKeyboardRemove(),
+    )
 
 
 @router.message(ChangeRoleSurvey.user_tg_id)

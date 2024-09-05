@@ -1,7 +1,7 @@
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.utils import markdown
 
 from bot.db.models import UserModel
@@ -25,7 +25,7 @@ class AddProductSurvey(StatesGroup):
 @router.message(F.text == RootKeyboardText.ADD_PRODUCT)
 async def add_product_button_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(AddProductSurvey.name)
-    await message.answer(text="📝 Введіть назву одягу:")
+    await message.answer(text="📝 Введіть назву одягу:", reply_markup=ReplyKeyboardRemove())
 
 
 @router.message(AddProductSurvey.name)
@@ -39,10 +39,10 @@ async def add_product_survey_name_handler(message: Message, state: FSMContext) -
 
 
 @router.message(AddProductSurvey.gender, F.text.in_(PRODUCT_GENDER_TO_TEXT_MAP.values()))
-async def add_product_survey_gender_handler(message: Message, state: FSMContext, user: UserModel) -> None:
+async def add_product_survey_gender_handler(message: Message, state: FSMContext) -> None:
     await state.update_data({"gender": get_key_by_value(PRODUCT_GENDER_TO_TEXT_MAP, message.text)})
     await state.set_state(AddProductSurvey.category)
-    await message.answer(text="🏷️ Введіть категорію одягу:", reply_markup=build_root_keyboard(role=user.role))
+    await message.answer(text="🏷️ Введіть категорію одягу:", reply_markup=ReplyKeyboardRemove())
 
 
 @router.message(AddProductSurvey.gender, ~F.text.in_(PRODUCT_GENDER_TO_TEXT_MAP.values()))
@@ -76,7 +76,8 @@ async def add_product_survey_price_handler(message: Message, state: FSMContext, 
     await state.clear()
     await message.answer(
         text=markdown.text(
-            "✅ Одяг успішно доданий до каталогу.", f"Ось його унікальний ідентифікатор: {markdown.hcode(product.id)}."
+            "✅ Одяг успішно доданий до каталогу.",
+            f"Ось його унікальний ідентифікатор: {markdown.hcode(product.id)}.",
         ),
         reply_markup=build_root_keyboard(role=user.role),
     )
