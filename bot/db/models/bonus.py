@@ -1,7 +1,7 @@
 import datetime as dt
 from enum import StrEnum, auto
 
-from sqlalchemy import CheckConstraint, ForeignKey
+from sqlalchemy import BigInteger, CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 from bot.db.model_types import created_at, intpk
@@ -21,7 +21,7 @@ class BonusUnit(StrEnum):
 
 class BonusModel(ModelBase):
     id: Mapped[intpk]
-    user_tg_id: Mapped[int] = mapped_column(ForeignKey("users.tg_id"))
+    user_tg_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.tg_id"))
     type: Mapped[BonusType]
     value: Mapped[int]
     unit: Mapped[BonusUnit]
