@@ -72,5 +72,8 @@ async def change_role_survey_new_role_handler(message: Message, state: FSMContex
 
 
 @router.message(ChangeRoleSurvey.new_role, ~F.text.in_(ROLE_TO_TEXT_MAP.values()))
-async def change_role_survey_unknown_new_role_handler(message: Message) -> None:
-    await message.answer(text="⚠️ Вказаної ролі не існує. Будь ласка, оберіть роль, натиснувши кнопку.")
+async def change_role_survey_unknown_new_role_handler(message: Message, user: UserModel) -> None:
+    await message.answer(
+        text="⚠️ Вказаної ролі не існує. Будь ласка, оберіть роль, натиснувши кнопку.",
+        reply_markup=build_change_role_keyboard(active_role=user.role),
+    )

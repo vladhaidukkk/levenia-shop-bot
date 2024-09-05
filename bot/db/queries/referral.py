@@ -7,7 +7,7 @@ from bot.errors import ReferralAlreadyExistsError
 
 
 @inject_session
-async def add_referral(session: AsyncSession, user_tg_id: int, referrer_tg_id: id, bonus_id: int) -> ReferralModel:
+async def add_referral(session: AsyncSession, *, user_tg_id: int, referrer_tg_id: id, bonus_id: int) -> ReferralModel:
     try:
         new_referral = ReferralModel(user_tg_id=user_tg_id, referrer_tg_id=referrer_tg_id, bonus_id=bonus_id)
         session.add(new_referral)

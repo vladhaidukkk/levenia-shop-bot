@@ -8,7 +8,7 @@ from bot.errors import UserAlreadyExistsError, UserNotFoundError
 
 
 @inject_session
-async def add_user(session: AsyncSession, tg_id: int, username: str) -> UserModel:
+async def add_user(session: AsyncSession, *, tg_id: int, username: str) -> UserModel:
     try:
         new_user = UserModel(tg_id=tg_id, username=username)
         session.add(new_user)
