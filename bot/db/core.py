@@ -1,7 +1,8 @@
 from collections.abc import Callable
 from functools import wraps
+from typing import Concatenate, ParamSpec, TypeVar
 
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from bot.config import settings
 
@@ -13,10 +14,13 @@ engine = create_async_engine(
 )
 session_factory = async_sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
+P = ParamSpec("P")
+R = TypeVar("R")
 
-def inject_session(fn: Callable) -> Callable:
+
+def inject_session(fn: Callable[Concatenate[AsyncSession, P], R]) -> Callable[P, R]:
     @wraps(fn)
-    async def wrapper(*args: any, **kwargs: any) -> any:
+    async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         async with session_factory() as session:
             return await fn(session, *args, **kwargs)
 
