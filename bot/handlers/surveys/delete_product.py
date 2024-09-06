@@ -7,8 +7,8 @@ from aiogram.utils import markdown
 from bot.db.models import UserModel
 from bot.db.queries.product import delete_product
 from bot.errors import ProductAlreadyDeletedError, ProductNotFoundError
-from bot.filters import ManagerFilter
-from bot.keyboards.reply.root import RootKeyboardText, build_root_reply_keyboard
+from bot.filters.role import ManagerFilter
+from bot.keyboards.reply.root import RootKeyboardText, root_reply_kb
 
 router = Router(name=__name__)
 router.message.filter(ManagerFilter())
@@ -45,7 +45,7 @@ async def delete_product_survey_product_id_handler(message: Message, state: FSMC
             markdown.hcode(data["product_id"]),
             "видалено. Ви можете відновити його будь-коли.",
         ),
-        reply_markup=build_root_reply_keyboard(role=user.role),
+        reply_markup=root_reply_kb(role=user.role),
     )
 
 

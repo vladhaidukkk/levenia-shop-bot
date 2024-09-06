@@ -9,7 +9,7 @@ from bot.db.models import BonusType, BonusUnit, UserModel
 from bot.db.queries.bonus import add_bonus
 from bot.db.queries.referral import add_referral
 from bot.db.queries.user import add_user, get_user
-from bot.keyboards.reply.root import build_root_reply_keyboard
+from bot.keyboards.reply.root import root_reply_kb
 
 router = Router(name=__name__)
 
@@ -46,7 +46,7 @@ async def referral_start_command_handler(message: Message, referral: Match[str],
     await message.answer(
         # TODO: update welcome message.
         markdown.text("👋", markdown.hbold(message.from_user.full_name)),
-        reply_markup=build_root_reply_keyboard(role=user.role),
+        reply_markup=root_reply_kb(role=user.role),
     )
 
 
@@ -57,7 +57,7 @@ async def start_command_handler(message: Message, user: UserModel | None) -> Non
     await message.answer(
         # TODO: update welcome message.
         markdown.text("👋", markdown.hbold(message.from_user.full_name)),
-        reply_markup=build_root_reply_keyboard(role=user.role),
+        reply_markup=root_reply_kb(role=user.role),
     )
 
 

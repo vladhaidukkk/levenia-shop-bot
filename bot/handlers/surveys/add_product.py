@@ -6,12 +6,12 @@ from aiogram.utils import markdown
 
 from bot.db.models import UserModel
 from bot.db.queries.product import add_product
-from bot.filters import ManagerFilter
-from bot.keyboards.inline.skip_survey_step import SKIP_SURVEY_STEP_DATA, build_skip_survey_step_inline_keyboard
-from bot.keyboards.reply.root import RootKeyboardText, build_root_reply_keyboard
+from bot.filters.role import ManagerFilter
+from bot.keyboards.inline.skip_survey_step import SKIP_SURVEY_STEP_DATA, skip_survey_step_inline_kb
+from bot.keyboards.reply.root import RootKeyboardText, root_reply_kb
 from bot.keyboards.reply.select_product_gender import (
     PRODUCT_GENDER_TO_TEXT_MAP,
-    build_select_product_gender_reply_keyboard,
+    select_product_gender_reply_kb,
 )
 from bot.utils import get_key_by_value
 
@@ -38,7 +38,7 @@ async def add_product_button_handler(message: Message, state: FSMContext) -> Non
 async def add_product_survey_name_handler(message: Message, state: FSMContext) -> None:
     await state.update_data({"name": message.text})
     await state.set_state(AddProductSurvey.image_id)
-    await message.answer("🖼️ Завантажте зображення одягу:", reply_markup=build_skip_survey_step_inline_keyboard())
+    await message.answer("🖼️ Завантажте зображення одягу:", reply_markup=skip_survey_step_inline_kb())
 
 
 @router.message(AddProductSurvey.image_id, F.photo)
@@ -47,7 +47,7 @@ async def add_product_survey_image_id_handler(message: Message, state: FSMContex
     await state.set_state(AddProductSurvey.gender)
     await message.answer(
         "🚻 Оберіть гендер одягу, натиснувши кнопку.",
-        reply_markup=build_select_product_gender_reply_keyboard(),
+        reply_markup=select_product_gender_reply_kb(),
     )
 
 
@@ -64,7 +64,7 @@ async def add_product_survey_skip_image_id_handler(callback_query: CallbackQuery
     await callback_query.message.delete()
     await callback_query.message.answer(
         "🚻 Оберіть гендер одягу, натиснувши кнопку.",
-        reply_markup=build_select_product_gender_reply_keyboard(),
+        reply_markup=select_product_gender_reply_kb(),
     )
 
 
@@ -79,7 +79,7 @@ async def add_product_survey_gender_handler(message: Message, state: FSMContext)
 async def add_product_survey_unknown_gender_handler(message: Message) -> None:
     await message.answer(
         "⚠️ Вказаного гендеру не існує. Будь ласка, оберіть гендер одягу, натиснувши кнопку.",
-        reply_markup=build_select_product_gender_reply_keyboard(),
+        reply_markup=select_product_gender_reply_kb(),
     )
 
 
@@ -110,7 +110,7 @@ async def add_product_survey_price_handler(message: Message, state: FSMContext, 
             "✅ Одяг успішно доданий до каталогу.",
             f"Ось його ID: {markdown.hcode(product.id)}.",
         ),
-        reply_markup=build_root_reply_keyboard(role=user.role),
+        reply_markup=root_reply_kb(role=user.role),
     )
 
 

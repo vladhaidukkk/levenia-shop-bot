@@ -1,3 +1,5 @@
+from functools import cache
+
 from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
@@ -10,7 +12,8 @@ PRODUCT_GENDER_TO_TEXT_MAP = {
 }
 
 
-def build_select_product_gender_reply_keyboard() -> ReplyKeyboardMarkup:
+@cache
+def select_product_gender_reply_kb() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     for product_gender in ProductGender:
         builder.button(text=PRODUCT_GENDER_TO_TEXT_MAP[product_gender])

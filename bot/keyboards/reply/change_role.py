@@ -1,3 +1,5 @@
+from functools import cache
+
 from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
@@ -10,7 +12,8 @@ ROLE_TO_TEXT_MAP = {
 }
 
 
-def build_change_role_reply_keyboard(active_role: UserRole) -> ReplyKeyboardMarkup:
+@cache
+def change_role_reply_kb(active_role: UserRole) -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     for role in UserRole:
         if role == active_role:
