@@ -1,18 +1,19 @@
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 from aiogram.utils import markdown
 
 from bot.db.models import UserModel
 from bot.db.queries.user import get_user, update_user
 from bot.filters.role import AdminFilter
-from bot.keyboards.reply.change_role import ROLE_TO_TEXT_MAP, change_role_reply_kb
+from bot.keyboards.inline.change_role import ROLE_TO_DATA_MAP, ROLE_TO_TEXT_MAP, change_role_inline_kb
 from bot.keyboards.reply.root import RootKeyboardText, root_reply_kb
 from bot.utils import get_key_by_value
 
 router = Router(name=__name__)
 router.message.filter(AdminFilter())
+router.callback_query.filter(AdminFilter())
 
 
 class ChangeRoleSurvey(StatesGroup):
@@ -45,7 +46,7 @@ async def change_role_survey_user_tg_id_handler(message: Message, state: FSMCont
             f"{markdown.hbold(user.role.value.capitalize())}.",
             "Оберіть нову роль, натиснувши кнопку.",
         ),
-        reply_markup=change_role_reply_kb(active_role=user.role),
+        reply_markup=change_role_inline_kb(active_role=user.role),
     )
 
 
@@ -54,25 +55,31 @@ async def change_role_survey_invalid_user_tg_id_handler(message: Message) -> Non
     await message.answer("⚠️ Ви ввели неправильний ID користувача. Спробуйте ще раз:")
 
 
-@router.message(ChangeRoleSurvey.new_role, F.text.in_(ROLE_TO_TEXT_MAP.values()))
-async def change_role_survey_new_role_handler(message: Message, state: FSMContext, user: UserModel) -> None:
-    await state.update_data({"new_role": get_key_by_value(ROLE_TO_TEXT_MAP, message.text)})
+@router.callback_query(ChangeRoleSurvey.new_role, F.data.in_(ROLE_TO_DATA_MAP.values()))
+async def change_role_survey_new_role_handler(
+    callback_query: CallbackQuery, state: FSMContext, user: UserModel
+) -> None:
+    new_role = get_key_by_value(ROLE_TO_DATA_MAP, callback_query.data)
+    await state.update_data({"new_role": new_role})
     data = await state.get_data()
 
     updated_user = await update_user(tg_id=data["user_tg_id"], role=data["new_role"])
     if user.tg_id == updated_user.tg_id:
         user = updated_user
     else:
-        await message.bot.send_message(
+        await callback_query.message.bot.send_message(
             chat_id=updated_user.tg_id,
             text=markdown.text(
                 "🎭 Вашу роль було змінено. Тепер ви -",
-                markdown.hbold(updated_user.role.value.capitalize()),
+                f"{markdown.hbold(updated_user.role.value.capitalize())}.",
             ),
         )
 
     await state.clear()
-    await message.answer(
+    await callback_query.answer()
+    await callback_query.message.edit_reply_markup(reply_markup=None)
+    await callback_query.message.answer(ROLE_TO_TEXT_MAP[new_role])
+    await callback_query.message.answer(
         markdown.text(
             "✅ Роль для користувача",
             markdown.hcode(updated_user.tg_id),
@@ -82,9 +89,6 @@ async def change_role_survey_new_role_handler(message: Message, state: FSMContex
     )
 
 
-@router.message(ChangeRoleSurvey.new_role, ~F.text.in_(ROLE_TO_TEXT_MAP.values()))
-async def change_role_survey_unknown_new_role_handler(message: Message, user: UserModel) -> None:
-    await message.answer(
-        "⚠️ Вказаної ролі не існує. Будь ласка, оберіть роль, натиснувши кнопку.",
-        reply_markup=change_role_reply_kb(active_role=user.role),
-    )
+@router.message(ChangeRoleSurvey.new_role)
+async def change_role_survey_unknown_new_role_handler(message: Message) -> None:
+    await message.answer("⚠️ Будь ласка, оберіть нову роль, натиснувши кнопку під повідомленням.")
