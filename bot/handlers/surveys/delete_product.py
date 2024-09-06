@@ -1,13 +1,14 @@
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message
 from aiogram.utils import markdown
 
 from bot.db.models import UserModel
 from bot.db.queries.product import delete_product
 from bot.errors import ProductAlreadyDeletedError, ProductNotFoundError
 from bot.filters.role import ManagerFilter
+from bot.keyboards.reply.cancel_survey import cancel_survey_reply_kb
 from bot.keyboards.reply.root import RootKeyboardText, root_reply_kb
 
 router = Router(name=__name__)
@@ -21,7 +22,7 @@ class DeleteProductSurvey(StatesGroup):
 @router.message(F.text == RootKeyboardText.DELETE_PRODUCT)
 async def delete_product_button_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(DeleteProductSurvey.product_id)
-    await message.answer("🆔️ Введіть ID одягу, який ви хочете видалити:", reply_markup=ReplyKeyboardRemove())
+    await message.answer("🆔️ Введіть ID одягу, який ви хочете видалити:", reply_markup=cancel_survey_reply_kb())
 
 
 @router.message(DeleteProductSurvey.product_id, F.text.regexp(r"^\d+$"))

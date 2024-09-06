@@ -1,7 +1,7 @@
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
+from aiogram.types import CallbackQuery, Message
 from aiogram.utils import markdown
 
 from bot.db.models import UserModel
@@ -13,6 +13,7 @@ from bot.keyboards.inline.select_product_gender import (
     select_product_gender_inline_kb,
 )
 from bot.keyboards.inline.skip_survey_step import SKIP_SURVEY_STEP_DATA, skip_survey_step_inline_kb
+from bot.keyboards.reply.cancel_survey import cancel_survey_reply_kb
 from bot.keyboards.reply.root import RootKeyboardText, root_reply_kb
 from bot.utils import get_key_by_value
 
@@ -35,7 +36,7 @@ class AddProductSurvey(StatesGroup):
 @router.message(F.text == RootKeyboardText.ADD_PRODUCT)
 async def add_product_button_handler(message: Message, state: FSMContext) -> None:
     await state.set_state(AddProductSurvey.name)
-    await message.answer("📝 Введіть назву одягу:", reply_markup=ReplyKeyboardRemove())
+    await message.answer("📝 Введіть назву одягу:", reply_markup=cancel_survey_reply_kb())
 
 
 @router.message(AddProductSurvey.name, F.text)

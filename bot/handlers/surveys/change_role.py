@@ -1,13 +1,14 @@
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
+from aiogram.types import CallbackQuery, Message
 from aiogram.utils import markdown
 
 from bot.db.models import UserModel
 from bot.db.queries.user import get_user, update_user
 from bot.filters.role import AdminFilter
 from bot.keyboards.inline.change_role import ROLE_TO_DATA_MAP, ROLE_TO_TEXT_MAP, change_role_inline_kb
+from bot.keyboards.reply.cancel_survey import cancel_survey_reply_kb
 from bot.keyboards.reply.root import RootKeyboardText, root_reply_kb
 from bot.utils import get_key_by_value
 
@@ -26,7 +27,7 @@ async def change_role_button_handler(message: Message, state: FSMContext) -> Non
     await state.set_state(ChangeRoleSurvey.user_tg_id)
     await message.answer(
         "🪪 Введіть ID користувача, для якого ви хочете змінити роль:",
-        reply_markup=ReplyKeyboardRemove(),
+        reply_markup=cancel_survey_reply_kb(),
     )
 
 
