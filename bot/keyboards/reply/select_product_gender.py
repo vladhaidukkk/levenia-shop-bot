@@ -10,7 +10,7 @@ PRODUCT_GENDER_TO_TEXT_MAP = {
 }
 
 
-def build_select_product_gender_keyboard() -> ReplyKeyboardMarkup:
+def build_select_product_gender_reply_keyboard() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     for product_gender in ProductGender:
         builder.button(text=PRODUCT_GENDER_TO_TEXT_MAP[product_gender])

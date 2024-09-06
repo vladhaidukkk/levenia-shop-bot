@@ -13,7 +13,7 @@ class RootKeyboardText(StrEnum):
     INVITE_FRIEND = "🔗 Запросити Друга"
 
 
-def build_root_keyboard(role: UserRole) -> ReplyKeyboardMarkup:
+def build_root_reply_keyboard(role: UserRole) -> ReplyKeyboardMarkup:
     client_actions = [RootKeyboardText.INVITE_FRIEND]
     manager_actions = [RootKeyboardText.ADD_PRODUCT, RootKeyboardText.DELETE_PRODUCT, *client_actions]
     admin_actions = [RootKeyboardText.CHANGE_ROLE, *manager_actions]

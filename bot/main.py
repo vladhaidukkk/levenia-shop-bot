@@ -12,7 +12,7 @@ from bot.middlewares.auth import AuthMiddleware
 
 async def main() -> None:
     dp = Dispatcher()
-    dp.message.outer_middleware(AuthMiddleware())
+    dp.update.outer_middleware(AuthMiddleware())
     dp.include_router(router)
 
     bot = Bot(token=settings.bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))

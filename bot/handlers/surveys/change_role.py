@@ -7,8 +7,8 @@ from aiogram.utils import markdown
 from bot.db.models import UserModel
 from bot.db.queries.user import get_user, update_user
 from bot.filters import AdminFilter
-from bot.keyboards.change_role import ROLE_TO_TEXT_MAP, build_change_role_keyboard
-from bot.keyboards.root import RootKeyboardText, build_root_keyboard
+from bot.keyboards.reply.change_role import ROLE_TO_TEXT_MAP, build_change_role_reply_keyboard
+from bot.keyboards.reply.root import RootKeyboardText, build_root_reply_keyboard
 from bot.utils import get_key_by_value
 
 router = Router(name=__name__)
@@ -50,7 +50,7 @@ async def change_role_survey_user_tg_id_handler(message: Message, state: FSMCont
             f"{markdown.hbold(user.role.value.capitalize())}.",
             "Оберіть нову роль, натиснувши кнопку.",
         ),
-        reply_markup=build_change_role_keyboard(active_role=user.role),
+        reply_markup=build_change_role_reply_keyboard(active_role=user.role),
     )
 
 
@@ -78,7 +78,7 @@ async def change_role_survey_new_role_handler(message: Message, state: FSMContex
             markdown.hcode(updated_user.tg_id),
             "успішно змінено.",
         ),
-        reply_markup=build_root_keyboard(role=user.role),
+        reply_markup=build_root_reply_keyboard(role=user.role),
     )
 
 
@@ -86,5 +86,5 @@ async def change_role_survey_new_role_handler(message: Message, state: FSMContex
 async def change_role_survey_unknown_new_role_handler(message: Message, user: UserModel) -> None:
     await message.answer(
         "⚠️ Вказаної ролі не існує. Будь ласка, оберіть роль, натиснувши кнопку.",
-        reply_markup=build_change_role_keyboard(active_role=user.role),
+        reply_markup=build_change_role_reply_keyboard(active_role=user.role),
     )

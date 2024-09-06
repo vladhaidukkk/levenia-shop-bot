@@ -10,7 +10,7 @@ ROLE_TO_TEXT_MAP = {
 }
 
 
-def build_change_role_keyboard(active_role: UserRole) -> ReplyKeyboardMarkup:
+def build_change_role_reply_keyboard(active_role: UserRole) -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     for role in UserRole:
         if role == active_role:

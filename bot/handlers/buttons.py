@@ -3,7 +3,7 @@ from aiogram.types import Message
 from aiogram.utils import markdown
 from aiogram.utils.deep_linking import create_start_link
 
-from bot.keyboards.root import RootKeyboardText
+from bot.keyboards.reply.root import RootKeyboardText
 
 router = Router(name=__name__)
 
