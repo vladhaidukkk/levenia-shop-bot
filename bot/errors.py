@@ -25,3 +25,20 @@ class ProductNotFoundError(CustomError):
 class ProductAlreadyDeletedError(CustomError):
     def __init__(self, id_: int) -> None:
         super().__init__(f"product with id={id_} is already deleted")
+
+
+class ProductVariantAlreadyExistsError(CustomError):
+    def __init__(self, product_id: int, color: str | None, size: str) -> None:
+        super().__init__(
+            f"product variant with color={color} and size={size} for product with id={product_id} already exists"
+        )
+
+
+class ProductVariantNotFoundError(CustomError):
+    def __init__(self, id_: int) -> None:
+        super().__init__(f"product variant with id={id_} not found")
+
+
+class ProductVariantAlreadyDeletedError(CustomError):
+    def __init__(self, id_: int) -> None:
+        super().__init__(f"product variant with id={id_} is already deleted")

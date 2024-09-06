@@ -38,7 +38,7 @@ async def add_product(
 
 
 @inject_session
-async def delete_product(session: AsyncSession, id_: int) -> None:
+async def delete_product(session: AsyncSession, *, id_: int) -> None:
     select_product_query = select(ProductModel).filter_by(id=id_)
     product = await session.scalar(select_product_query)
 

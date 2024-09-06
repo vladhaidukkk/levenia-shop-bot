@@ -20,13 +20,13 @@ async def add_user(session: AsyncSession, *, tg_id: int, username: str) -> UserM
 
 
 @inject_session
-async def get_user(session: AsyncSession, tg_id: int) -> UserModel | None:
+async def get_user(session: AsyncSession, *, tg_id: int) -> UserModel | None:
     query = select(UserModel).filter_by(tg_id=tg_id)
     return await session.scalar(query)
 
 
 @inject_session
-async def update_user(session: AsyncSession, tg_id: int, role: UserRole) -> UserModel:
+async def update_user(session: AsyncSession, *, tg_id: int, role: UserRole) -> UserModel:
     select_user_query = select(UserModel).filter_by(tg_id=tg_id)
     user = await session.scalar(select_user_query)
     if not user:
