@@ -26,6 +26,7 @@ class AddProductSurvey(StatesGroup):
     description = State()
     gender = State()
     category = State()
+    brand = State()
     price = State()
 
 
@@ -113,13 +114,34 @@ async def add_product_survey_unknown_gender_handler(message: Message) -> None:
 @router.message(AddProductSurvey.category, F.text)
 async def add_product_survey_category_handler(message: Message, state: FSMContext) -> None:
     await state.update_data({"category": message.text})
-    await state.set_state(AddProductSurvey.price)
-    await message.answer("💵 Вкажіть ціну одягу в гривнях:")
+    await state.set_state(AddProductSurvey.brand)
+    await message.answer("🏢 Вкажіть бренд одягу:", reply_markup=skip_survey_step_inline_kb())
 
 
 @router.message(AddProductSurvey.category, ~F.text)
 async def add_product_survey_invalid_category_handler(message: Message) -> None:
     await message.answer("⚠️ Вам необхідно ввести саме текст, а не щось інше. Спробуйте ще раз:")
+
+
+@router.message(AddProductSurvey.brand, F.text)
+async def add_product_survey_brand_handler(message: Message, state: FSMContext) -> None:
+    await state.update_data({"brand": message.text})
+    await state.set_state(AddProductSurvey.price)
+    await message.answer("💵 Вкажіть ціну одягу в гривнях:")
+
+
+@router.message(AddProductSurvey.brand, ~F.text)
+async def add_product_survey_invalid_brand_handler(message: Message) -> None:
+    await message.answer("⚠️ Вам необхідно ввести саме текст, а не щось інше. Спробуйте ще раз:")
+
+
+@router.callback_query(AddProductSurvey.brand, F.data == SKIP_SURVEY_STEP_DATA)
+async def add_product_survey_skip_brand_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
+    await state.update_data({"brand": None})
+    await state.set_state(AddProductSurvey.price)
+    await callback_query.answer()
+    await callback_query.message.delete()
+    await callback_query.message.answer("💵 Вкажіть ціну одягу в гривнях:")
 
 
 @router.message(AddProductSurvey.price, F.text.regexp(r"^[1-9][0-9]*$"))
@@ -134,6 +156,7 @@ async def add_product_survey_price_handler(message: Message, state: FSMContext, 
         description=data["description"],
         gender=data["gender"],
         category=data["category"],
+        brand=data["brand"],
         price=data["price"],
     )
 
