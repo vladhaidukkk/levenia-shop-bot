@@ -23,6 +23,7 @@ router.callback_query.filter(ManagerFilter())
 class AddProductSurvey(StatesGroup):
     name = State()
     image_id = State()
+    description = State()
     gender = State()
     category = State()
     price = State()
@@ -49,11 +50,8 @@ async def add_product_survey_invalid_name_handler(message: Message) -> None:
 @router.message(AddProductSurvey.image_id, F.photo)
 async def add_product_survey_image_id_handler(message: Message, state: FSMContext) -> None:
     await state.update_data({"image_id": message.photo[-1].file_id})
-    await state.set_state(AddProductSurvey.gender)
-    await message.answer(
-        "🚻 Оберіть гендер одягу, натиснувши кнопку.",
-        reply_markup=select_product_gender_reply_kb(),
-    )
+    await state.set_state(AddProductSurvey.description)
+    await message.answer("✏️ Введіть опис одягу:", reply_markup=skip_survey_step_inline_kb())
 
 
 @router.message(AddProductSurvey.image_id, ~F.photo)
@@ -64,6 +62,30 @@ async def add_product_survey_invalid_image_id_handler(message: Message) -> None:
 @router.callback_query(AddProductSurvey.image_id, F.data == SKIP_SURVEY_STEP_DATA)
 async def add_product_survey_skip_image_id_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
     await state.update_data({"image_id": None})
+    await state.set_state(AddProductSurvey.description)
+    await callback_query.answer()
+    await callback_query.message.delete()
+    await callback_query.message.answer("✏️ Введіть опис одягу:", reply_markup=skip_survey_step_inline_kb())
+
+
+@router.message(AddProductSurvey.description, F.text)
+async def add_product_survey_description_handler(message: Message, state: FSMContext) -> None:
+    await state.update_data({"description": message.text})
+    await state.set_state(AddProductSurvey.gender)
+    await message.answer(
+        "🚻 Оберіть гендер одягу, натиснувши кнопку.",
+        reply_markup=select_product_gender_reply_kb(),
+    )
+
+
+@router.message(AddProductSurvey.description, ~F.text)
+async def add_product_survey_invalid_description_handler(message: Message) -> None:
+    await message.answer("⚠️ Вам необхідно ввести саме текст, а не щось інше. Спробуйте ще раз:")
+
+
+@router.callback_query(AddProductSurvey.description, F.data == SKIP_SURVEY_STEP_DATA)
+async def add_product_survey_skip_description_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
+    await state.update_data({"description": None})
     await state.set_state(AddProductSurvey.gender)
     await callback_query.answer()
     await callback_query.message.delete()
@@ -109,6 +131,7 @@ async def add_product_survey_price_handler(message: Message, state: FSMContext, 
         creator_tg_id=user.tg_id,
         name=data["name"],
         image_id=data["image_id"],
+        description=data["description"],
         gender=data["gender"],
         category=data["category"],
         price=data["price"],
