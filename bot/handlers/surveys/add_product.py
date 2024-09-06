@@ -27,6 +27,7 @@ class AddProductSurvey(StatesGroup):
     gender = State()
     category = State()
     brand = State()
+    material = State()
     price = State()
 
 
@@ -126,8 +127,8 @@ async def add_product_survey_invalid_category_handler(message: Message) -> None:
 @router.message(AddProductSurvey.brand, F.text)
 async def add_product_survey_brand_handler(message: Message, state: FSMContext) -> None:
     await state.update_data({"brand": message.text})
-    await state.set_state(AddProductSurvey.price)
-    await message.answer("💵 Вкажіть ціну одягу в гривнях:")
+    await state.set_state(AddProductSurvey.material)
+    await message.answer("🧵 Вкажіть матеріал одягу:", reply_markup=skip_survey_step_inline_kb())
 
 
 @router.message(AddProductSurvey.brand, ~F.text)
@@ -138,6 +139,27 @@ async def add_product_survey_invalid_brand_handler(message: Message) -> None:
 @router.callback_query(AddProductSurvey.brand, F.data == SKIP_SURVEY_STEP_DATA)
 async def add_product_survey_skip_brand_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
     await state.update_data({"brand": None})
+    await state.set_state(AddProductSurvey.material)
+    await callback_query.answer()
+    await callback_query.message.delete()
+    await callback_query.message.answer("🧵 Вкажіть матеріал одягу:", reply_markup=skip_survey_step_inline_kb())
+
+
+@router.message(AddProductSurvey.material, F.text)
+async def add_product_survey_material_handler(message: Message, state: FSMContext) -> None:
+    await state.update_data({"material": message.text})
+    await state.set_state(AddProductSurvey.price)
+    await message.answer("💵 Вкажіть ціну одягу в гривнях:")
+
+
+@router.message(AddProductSurvey.material, ~F.text)
+async def add_product_survey_invalid_material_handler(message: Message) -> None:
+    await message.answer("⚠️ Вам необхідно ввести саме текст, а не щось інше. Спробуйте ще раз:")
+
+
+@router.callback_query(AddProductSurvey.material, F.data == SKIP_SURVEY_STEP_DATA)
+async def add_product_survey_skip_material_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
+    await state.update_data({"material": None})
     await state.set_state(AddProductSurvey.price)
     await callback_query.answer()
     await callback_query.message.delete()
@@ -157,6 +179,7 @@ async def add_product_survey_price_handler(message: Message, state: FSMContext, 
         gender=data["gender"],
         category=data["category"],
         brand=data["brand"],
+        material=data["material"],
         price=data["price"],
     )
 
