@@ -8,6 +8,7 @@ from bot.keyboards.reply.cancel_survey import CANCEL_SURVEY_TEXT
 from bot.keyboards.reply.root import root_reply_kb
 
 from .add_product import router as add_product_survey_router
+from .add_product_variant import router as add_product_variant_survey_router
 from .change_role import router as change_role_survey_router
 from .delete_product import router as delete_product_survey_router
 
@@ -21,4 +22,9 @@ async def cancel_command_handler(message: Message, state: FSMContext, user: User
     await message.answer("🚫 Поточну дію скасовано.", reply_markup=root_reply_kb(role=user.role))
 
 
-router.include_routers(change_role_survey_router, add_product_survey_router, delete_product_survey_router)
+router.include_routers(
+    change_role_survey_router,
+    add_product_survey_router,
+    add_product_variant_survey_router,
+    delete_product_survey_router,
+)

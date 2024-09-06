@@ -1,5 +1,6 @@
 from asyncpg import UniqueViolationError
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.db.core import inject_session
@@ -30,8 +31,10 @@ async def add_product_variant(
         )
         session.add(new_product_variant)
         await session.commit()
-    except UniqueViolationError as error:
-        raise ProductVariantAlreadyExistsError(product_id=product_id, color=color, size=size) from error
+    except IntegrityError as error:
+        if isinstance(error.orig.__cause__, UniqueViolationError):
+            raise ProductVariantAlreadyExistsError(product_id=product_id, color=color, size=size) from error
+        raise
     else:
         return new_product_variant
 

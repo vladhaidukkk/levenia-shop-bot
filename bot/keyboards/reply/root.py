@@ -10,6 +10,7 @@ from bot.db.models import UserRole
 class RootKeyboardText(StrEnum):
     CHANGE_ROLE = "🎭 Змінити Роль"
     ADD_PRODUCT = "🆕 Додати Новий Одяг"
+    ADD_PRODUCT_VARIANT = "➕ Додати Варіант Одягу"
     DELETE_PRODUCT = "🗑️ Видалити Одяг"
     INVITE_FRIEND = "🔗 Запросити Друга"
 
@@ -17,7 +18,12 @@ class RootKeyboardText(StrEnum):
 @cache
 def root_reply_kb(role: UserRole) -> ReplyKeyboardMarkup:
     client_actions = [RootKeyboardText.INVITE_FRIEND]
-    manager_actions = [RootKeyboardText.ADD_PRODUCT, RootKeyboardText.DELETE_PRODUCT, *client_actions]
+    manager_actions = [
+        RootKeyboardText.ADD_PRODUCT,
+        RootKeyboardText.ADD_PRODUCT_VARIANT,
+        RootKeyboardText.DELETE_PRODUCT,
+        *client_actions,
+    ]
     admin_actions = [RootKeyboardText.CHANGE_ROLE, *manager_actions]
     role_to_actions_map = {
         UserRole.ADMIN: admin_actions,
