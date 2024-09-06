@@ -11,6 +11,7 @@ from .add_product import router as add_product_survey_router
 from .add_product_variant import router as add_product_variant_survey_router
 from .change_role import router as change_role_survey_router
 from .delete_product import router as delete_product_survey_router
+from .delete_product_variant import router as delete_product_variant_survey_router
 
 router = Router(name=__name__)
 
@@ -27,4 +28,5 @@ router.include_routers(
     add_product_survey_router,
     add_product_variant_survey_router,
     delete_product_survey_router,
+    delete_product_variant_survey_router,
 )
