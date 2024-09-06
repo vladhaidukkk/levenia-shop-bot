@@ -7,12 +7,13 @@ from aiogram.utils import markdown
 from bot.db.models import UserModel
 from bot.db.queries.product import add_product
 from bot.filters.role import ManagerFilter
+from bot.keyboards.inline.select_product_gender import (
+    PRODUCT_GENDER_TO_DATA_MAP,
+    PRODUCT_GENDER_TO_TEXT_MAP,
+    select_product_gender_inline_kb,
+)
 from bot.keyboards.inline.skip_survey_step import SKIP_SURVEY_STEP_DATA, skip_survey_step_inline_kb
 from bot.keyboards.reply.root import RootKeyboardText, root_reply_kb
-from bot.keyboards.reply.select_product_gender import (
-    PRODUCT_GENDER_TO_TEXT_MAP,
-    select_product_gender_reply_kb,
-)
 from bot.utils import get_key_by_value
 
 router = Router(name=__name__)
@@ -76,7 +77,7 @@ async def add_product_survey_description_handler(message: Message, state: FSMCon
     await state.set_state(AddProductSurvey.gender)
     await message.answer(
         "🚻 Оберіть гендер одягу, натиснувши кнопку.",
-        reply_markup=select_product_gender_reply_kb(),
+        reply_markup=select_product_gender_inline_kb(),
     )
 
 
@@ -93,23 +94,25 @@ async def add_product_survey_skip_description_handler(callback_query: CallbackQu
     await callback_query.message.delete()
     await callback_query.message.answer(
         "🚻 Оберіть гендер одягу, натиснувши кнопку.",
-        reply_markup=select_product_gender_reply_kb(),
+        reply_markup=select_product_gender_inline_kb(),
     )
 
 
-@router.message(AddProductSurvey.gender, F.text.in_(PRODUCT_GENDER_TO_TEXT_MAP.values()))
-async def add_product_survey_gender_handler(message: Message, state: FSMContext) -> None:
-    await state.update_data({"gender": get_key_by_value(PRODUCT_GENDER_TO_TEXT_MAP, message.text)})
+@router.callback_query(AddProductSurvey.gender, F.data.in_(PRODUCT_GENDER_TO_DATA_MAP.values()))
+async def add_product_survey_gender_handler(callback_query: CallbackQuery, state: FSMContext) -> None:
+    product_gender = get_key_by_value(PRODUCT_GENDER_TO_DATA_MAP, callback_query.data)
+    await state.update_data({"gender": product_gender})
     await state.set_state(AddProductSurvey.category)
-    await message.answer("🏷️ Введіть категорію одягу:", reply_markup=ReplyKeyboardRemove())
+
+    await callback_query.answer()
+    await callback_query.message.edit_reply_markup(reply_markup=None)
+    await callback_query.message.answer(PRODUCT_GENDER_TO_TEXT_MAP[product_gender])
+    await callback_query.message.answer("🏷️ Введіть категорію одягу:")
 
 
-@router.message(AddProductSurvey.gender, ~F.text.in_(PRODUCT_GENDER_TO_TEXT_MAP.values()))
+@router.message(AddProductSurvey.gender)
 async def add_product_survey_unknown_gender_handler(message: Message) -> None:
-    await message.answer(
-        "⚠️ Вказаного гендеру не існує. Будь ласка, оберіть гендер одягу, натиснувши кнопку.",
-        reply_markup=select_product_gender_reply_kb(),
-    )
+    await message.answer("⚠️ Будь ласка, оберіть гендер одягу, натиснувши кнопку під повідомленням.")
 
 
 @router.message(AddProductSurvey.category, F.text)
