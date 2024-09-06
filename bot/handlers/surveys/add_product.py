@@ -34,11 +34,16 @@ async def add_product_button_handler(message: Message, state: FSMContext) -> Non
     await message.answer("📝 Введіть назву одягу:", reply_markup=ReplyKeyboardRemove())
 
 
-@router.message(AddProductSurvey.name)
+@router.message(AddProductSurvey.name, F.text)
 async def add_product_survey_name_handler(message: Message, state: FSMContext) -> None:
     await state.update_data({"name": message.text})
     await state.set_state(AddProductSurvey.image_id)
     await message.answer("🖼️ Завантажте зображення одягу:", reply_markup=skip_survey_step_inline_kb())
+
+
+@router.message(AddProductSurvey.name, ~F.text)
+async def add_product_survey_invalid_name_handler(message: Message) -> None:
+    await message.answer("⚠️ Вам необхідно ввести саме текст, а не щось інше. Спробуйте ще раз:")
 
 
 @router.message(AddProductSurvey.image_id, F.photo)
@@ -83,11 +88,16 @@ async def add_product_survey_unknown_gender_handler(message: Message) -> None:
     )
 
 
-@router.message(AddProductSurvey.category)
+@router.message(AddProductSurvey.category, F.text)
 async def add_product_survey_category_handler(message: Message, state: FSMContext) -> None:
     await state.update_data({"category": message.text})
     await state.set_state(AddProductSurvey.price)
     await message.answer("💵 Вкажіть ціну одягу в гривнях:")
+
+
+@router.message(AddProductSurvey.category, ~F.text)
+async def add_product_survey_invalid_category_handler(message: Message) -> None:
+    await message.answer("⚠️ Вам необхідно ввести саме текст, а не щось інше. Спробуйте ще раз:")
 
 
 @router.message(AddProductSurvey.price, F.text.regexp(r"^[1-9][0-9]*$"))

@@ -29,14 +29,9 @@ async def change_role_button_handler(message: Message, state: FSMContext) -> Non
     )
 
 
-@router.message(ChangeRoleSurvey.user_tg_id)
+@router.message(ChangeRoleSurvey.user_tg_id, F.text.regexp(r"^\d+$"))
 async def change_role_survey_user_tg_id_handler(message: Message, state: FSMContext) -> None:
-    try:
-        user_tg_id = int(message.text)
-    except ValueError:
-        await message.answer("⚠️ Ви ввели неправильний ID користувача. Спробуйте ще раз:")
-        return
-
+    user_tg_id = int(message.text)
     user = await get_user(tg_id=user_tg_id)
     if not user:
         await message.answer("⚠️ Користувача з таким ID не існує. Спробуйте ще раз:")
@@ -52,6 +47,11 @@ async def change_role_survey_user_tg_id_handler(message: Message, state: FSMCont
         ),
         reply_markup=change_role_reply_kb(active_role=user.role),
     )
+
+
+@router.message(ChangeRoleSurvey.user_tg_id, ~F.text.regexp(r"^\d+$"))
+async def change_role_survey_invalid_user_tg_id_handler(message: Message) -> None:
+    await message.answer("⚠️ Ви ввели неправильний ID користувача. Спробуйте ще раз:")
 
 
 @router.message(ChangeRoleSurvey.new_role, F.text.in_(ROLE_TO_TEXT_MAP.values()))
