@@ -1,5 +1,6 @@
 from .base import ModelBase
 from .bonus import BonusModel, BonusType, BonusUnit
+from .order import OrderModel, OrderStatus
 from .product import ProductGender, ProductModel
 from .product_variant import ProductVariantModel
 from .referral import ReferralModel
