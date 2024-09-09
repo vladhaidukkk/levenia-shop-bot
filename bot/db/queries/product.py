@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.db.core import inject_session
@@ -41,6 +41,39 @@ async def add_product(
 async def get_product(session: AsyncSession, *, id_: int) -> ProductModel | None:
     query = select(ProductModel).filter_by(id=id_)
     return await session.scalar(query)
+
+
+@inject_session
+async def get_product_categories(session: AsyncSession) -> list[str]:
+    query = (
+        select(func.lower(ProductModel.category))
+        .group_by(func.lower(ProductModel.category))
+        .order_by(func.lower(ProductModel.category))
+    )
+    result = await session.scalars(query)
+    return list(result.all())
+
+
+@inject_session
+async def get_product_brands(session: AsyncSession) -> list[str]:
+    query = (
+        select(func.lower(ProductModel.brand))
+        .group_by(func.lower(ProductModel.brand))
+        .order_by(func.lower(ProductModel.brand))
+    )
+    result = await session.scalars(query)
+    return list(result.all())
+
+
+@inject_session
+async def get_product_materials(session: AsyncSession) -> list[str]:
+    query = (
+        select(func.lower(ProductModel.material))
+        .group_by(func.lower(ProductModel.material))
+        .order_by(func.lower(ProductModel.material))
+    )
+    result = await session.scalars(query)
+    return list(result.all())
 
 
 @inject_session
