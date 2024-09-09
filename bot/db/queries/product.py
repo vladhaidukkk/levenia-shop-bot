@@ -44,7 +44,7 @@ async def get_product(session: AsyncSession, *, id_: int) -> ProductModel | None
 
 
 @inject_session
-async def get_product_categories(session: AsyncSession) -> list[str]:
+async def get_all_product_categories(session: AsyncSession) -> list[str]:
     query = (
         select(func.lower(ProductModel.category))
         .group_by(func.lower(ProductModel.category))
@@ -55,7 +55,7 @@ async def get_product_categories(session: AsyncSession) -> list[str]:
 
 
 @inject_session
-async def get_product_brands(session: AsyncSession) -> list[str]:
+async def get_all_product_brands(session: AsyncSession) -> list[str]:
     query = (
         select(func.lower(ProductModel.brand))
         .group_by(func.lower(ProductModel.brand))
@@ -66,7 +66,7 @@ async def get_product_brands(session: AsyncSession) -> list[str]:
 
 
 @inject_session
-async def get_product_materials(session: AsyncSession) -> list[str]:
+async def get_all_product_materials(session: AsyncSession) -> list[str]:
     query = (
         select(func.lower(ProductModel.material))
         .group_by(func.lower(ProductModel.material))

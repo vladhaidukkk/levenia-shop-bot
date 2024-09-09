@@ -13,6 +13,9 @@ class RootKeyboardText(StrEnum):
     ADD_PRODUCT_VARIANT = "➕ Додати Варіант Одягу"
     DELETE_PRODUCT = "🗑️ Видалити Одяг"
     DELETE_PRODUCT_VARIANT = "➖️ Видалити Варіант Одягу"
+    LIST_CATEGORIES = "🏷️ Список Категорій"
+    LIST_BRANDS = "🏢 Список Брендів"
+    LIST_MATERIALS = "🧵 Список Матеріалів"
     INVITE_FRIEND = "🔗 Запросити Друга"
 
 
@@ -24,6 +27,9 @@ def root_reply_kb(role: UserRole) -> ReplyKeyboardMarkup:
         RootKeyboardText.ADD_PRODUCT_VARIANT,
         RootKeyboardText.DELETE_PRODUCT,
         RootKeyboardText.DELETE_PRODUCT_VARIANT,
+        RootKeyboardText.LIST_CATEGORIES,
+        RootKeyboardText.LIST_BRANDS,
+        RootKeyboardText.LIST_MATERIALS,
         *client_actions,
     ]
     admin_actions = [RootKeyboardText.CHANGE_ROLE, *manager_actions]
